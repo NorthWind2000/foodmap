@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <!--要求当前网页使用IE浏览器最高版本的内核来渲染-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--视口的设置：视口的宽度和设备一致，默认的缩放比例和PC端一致，用户不能自行缩放-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>注册</title>
+
+    <!-- Bootstrap -->
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">-->
+		<link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--解决IE9一下浏览器由于对html5新增标签的不识别，导致的CSS不起作用的问题 -->
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <!--解决IE9一下浏览器对css3 Media Query 的不识别问题-->
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <script src="lib/vue-2.4.0.js"></script>
+	  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<style>
+
+		.container{
+			margin-top: 50px;
+			padding-top:30px;
+			background-color: rosybrown;
+			height: 300px;
+		}
+
+		label{
+			background-color: azure;
+			text-align: center;
+		}
+
+	</style>
+
+
+  </head>
+  <body>
+		<div class="container" id="app">
+
+			<div class="row">
+				<label class="m-auto title" v-text="msg1"></label>
+			</div>
+			<br />
+
+			<div class="row" v-if="exists">
+				<label class="m-auto" v-text="msg2"></label>
+			</div>
+			<br />
+			<div class="row">
+				<form class="m-auto" style="text-align: center;">
+					<label>昵称</label>
+					<input name="name" type="text" v-model="name" placeholder="请输入昵称"/><br />
+					<label>账号</label>
+					<input name="account" type="text"  v-model="account" placeholder="请输入账号"/><br />
+					<label>密码</label>
+					<input name="password" type="password" v-model="password" placeholder="请输入密码" /><br />
+					<br />
+					<input class="btn btn-success active" style="text-align: center;" type="button" @click="submit" value="提交"/>
+				</form>
+			</div>
+		</div>
+
+		<script>
+
+			axios.defaults.baseURL = 'http://112.125.122.106:8080';
+
+			var vm=new Vue({
+				el: '#app',
+				data:{
+					msg1:'注册界面',
+					msg2:"此账号已存在！",
+					exists:false,
+					account:'',
+					name:'',
+					password:''
+				},
+
+				methods: {
+					submit: function () {
+						if (this.account != "" && this.name != "" && this.password != "") {
+							var customer = {account: this.account, name: this.name, password: this.password};
+							axios.request(
+									{
+										url: "/customer_signup",
+										method: 'post',
+										params: customer
+									}
+							).then(respond=>{
+								if(respond.data==-1){
+									this.exists=true;
+								}else{
+									window.location.href = "index.html";
+								}
+							});
+						}
+					}
+				}
+			});
+		</script>
+  </body>
+</html>
